@@ -1,50 +1,53 @@
 @echo off
+setlocal EnableDelayedExpansion
 
 rem Add path to MSBuild Binaries
 set MSBUILD=()
-if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe" (
-    set MSBUILD="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe" (
-    set MSBUILD="%ProgramFiles%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\msbuild.exe" (
-    set MSBUILD="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\msbuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles%\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\msbuild.exe" (
-    set MSBUILD="%ProgramFiles%\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\msbuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" (
-	set MSBUILD="%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles%\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" (
-	set MSBUILD="%ProgramFiles%\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin\MSBuild.exe" (
-    set MSBUILD="%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin\MSBuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" (
-    set MSBUILD="%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles(x86)%\MSBuild\14.0\bin" (
-    set MSBUILD="%ProgramFiles(x86)%\MSBuild\14.0\bin\msbuild.exe"
-    goto :FOUND_MSBUILD
-)
-if exist "%ProgramFiles%\MSBuild\14.0\bin" (
-    set MSBUILD="%ProgramFiles%\MSBuild\14.0\bin\msbuild.exe"
-    goto :FOUND_MSBUILD
+set "_programfiles_86_vs=%ProgramFiles(x86)%\Microsoft Visual Studio"
+set "_programfiles_vs=%ProgramFiles%\Microsoft Visual Studio"
+
+set "_MSB_CAND=msbuild"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_vs%\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_86_vs%\2019\Preview\MSBuild\Current\Bin\MSBuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_86_vs%\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_vs%\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_vs%\2017\Professional\MSBuild\15.0\Bin\msbuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_vs%\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_86_vs%\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_86_vs%\2017\Professional\MSBuild\15.0\Bin\msbuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%_programfiles_86_vs%\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe"
+set "_MSB_CAND=%_MSB_CAND%;%ProgramFiles(x86)%\MSBuild\14.0\bin"
+set "_MSB_CAND=%_MSB_CAND%;%ProgramFiles%\MSBuild\14.0\bin"
+set "_MSB_CAND=%_MSB_CAND%;dotnet"
+
+set _MSB_CAND="%_MSB_CAND:;=";"%"
+
+for %%i in (%_MSB_CAND%) do (
+    set "found=()"
+
+	set "build_cand=%%~i"
+	where /q "!build_cand!" 2>nul
+    if "!ERRORLEVEL!" == "0" (
+		set "found=true" 
+    ) else (
+		set "build_cand=%%~$PATH:i"
+		if exist "!build_cand!" (
+			set "found=true" 
+        )
+    )
+
+    if "!found!" == "true" (
+        set MSBUILD="!build_cand!"
+		echo %%i | find "dotnet" >nul
+		if "!ERRORLEVEL!" == "0" (
+            set "MSBUILD=!MSBUILD! msbuild"
+		)
+		goto :FOUND_MSBUILD
+    )
 )
 
 if %MSBUILD%==() (
-    echo "I couldn't find MSBuild on your PC. Make sure it's installed somewhere, and if it's not in the above if statements (in build.bat), add it."
+    echo "I couldn't find MSBuild on your PC. Make sure it's installed somewhere, and if it's not in the above list (in build.bat), add it."
     goto :EXIT
 ) 
 :FOUND_MSBUILD
