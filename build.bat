@@ -54,6 +54,7 @@ if %MSBUILD%==() (
 set _MSBUILD_TARGET=Build
 set _MSBUILD_CONFIG=Debug
 set _MSBUILD_PLATFORM=x64
+set "_MSBUILD_BL="
 
 :ARGS_LOOP
 if (%1) == () goto :POST_ARGS_LOOP
@@ -69,11 +70,14 @@ if (%1) == (arm) (
 if (%1) == (x64) (
     set _MSBUILD_PLATFORM=x64
 )
+if (%1) == (bl) (
+    set "_MSBUILD_BL=/bl"
+)
 shift
 goto :ARGS_LOOP
 
 :POST_ARGS_LOOP
-%MSBUILD% %~dp0\DistroLauncher.sln /t:%_MSBUILD_TARGET% /m /nr:true /p:Configuration=%_MSBUILD_CONFIG%;Platform=%_MSBUILD_PLATFORM%
+%MSBUILD% %~dp0\DistroLauncher.sln %_MSBUILD_BL% /t:%_MSBUILD_TARGET% /m /nr:true /p:Configuration=%_MSBUILD_CONFIG%;Platform=%_MSBUILD_PLATFORM%
 
 if (%ERRORLEVEL%) == (0) (
     echo.
