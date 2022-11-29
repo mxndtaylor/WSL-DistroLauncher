@@ -77,6 +77,13 @@ shift
 goto :ARGS_LOOP
 
 :POST_ARGS_LOOP
+for %%i in (ARM64 x64 %_MSBUILD_PLATFORM%) do (
+	if not exist %~dp0\%%i (
+		MKDIR %~dp0\%%i
+	)
+	COPY %~dp0\install.tar.gz %~dp0\%%i\install.tar.gz 
+)
+
 %MSBUILD% %~dp0\DistroLauncher.sln %_MSBUILD_BL% /t:%_MSBUILD_TARGET% /m /nr:true /p:Configuration=%_MSBUILD_CONFIG%;Platform=%_MSBUILD_PLATFORM%
 
 if (%ERRORLEVEL%) == (0) (
