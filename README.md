@@ -45,21 +45,53 @@ This is the basic flow of how the launcher code is set up.
 The distro launcher is comprised of two Visual Studio projects - `launcher` and `DistroLauncher-Appx`. The `launcher` project builds the actual executable that is run when a user launches the app. The `DistroLauncher-Appx` builds the distro package with all the correctly scaled assets and other dependencies. Code changes will be built in the `launcher` project (under `DistroLauncher/`). Manifest changes are applied in the `DistroLauncher-Appx` project (under `DistroLauncher-Appx/`). 
 
 ## Getting Started
+1. Set up Visual Studio (from scratch):
+    1. install these 'Workloads': 
+        - Universal Windows Platform development
+        - .NET desktop development 
+        - Desktop development with C++
+    1. once it's finished installing it should have an option to clone a repository, click that then enter this repo's .git file into the text box
+    1. once the project is open, locate the "Solution Explorer" tool. It could be:
+        - off to the right
+        - available from the toolbar "View > Solution Explorer"
+        - default shortcut is "CTRL+ALT+L" in VS 2022
+    1. You'll want the solution explorer in the "solution view", so if you see it saying "Folder View" across the top, double click on `DistroLauncher.sln`
+        > *Note*  
+        > to switch back to folder view, click this icon:  
+        > ![solution explorer switcher button](./tutorial_assets/solution_explorer_view_switch_location.png)
+        > click where it says "folder view"
+    1. in solution explorer, in solution view, right click "Solution DistroLuancher (2 of 2 projects)" at the top
+    1. select "Retarget solution"
+    1. in the dialog that comes up:
+        - select the "lastest installed" for Windows SDK (in both places) 
+        - select any Windows SDK you like for Min version, for ease of use you can select the version currently installed on your machine (should be the default selected version)
+        - click okay
+    1. run the `.\build.bat` script, you should expect to get an error similar this, which you'll need to follow the steps below to fix:  
+	```
+	"$HOME\source\repos\WSL-DistroLauncher\DistroLauncher.sln" (Build target) (1) ->
+	   "$HOME\source\repos\WSL-DistroLauncher\DistroLauncher-Appx\DistroLauncher-Appx.vcxproj.metaproj" (default target) (2) ->
+	   "$HOME\source\repos\WSL-DistroLauncher\DistroLauncher-Appx\DistroLauncher-Appx.vcxproj" (default target) (4) ->
+	   (_GenerateAppxPackageRecipeFile target) ->
+		 C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\v17.0\AppxPackage\Microsoft.AppXPackage.Targets(3011,5): 
+		 error APPX0702: Payload file '$HOME\source\repos\WSL-DistroLauncher\x64\install.tar.gz' does not exist. 
+		 [$HOME\source\repos\WSL-DistroLauncher\DistroLauncher-Appx\DistroLauncher-Appx.vcxproj]
+	```
+
 1. Generate a test certificate:
     1. In Visual Studio, open `DistroLauncher-Appx/MyDistro.appxmanifest`
     1. Select the Packaging tab
     1. Select "Choose Certificate"
     1. Click the Configure Certificate drop down and select Create test certificate.
 
-2. Edit your distribution-specific information in `DistributionInfo.h` and `DistributionInfo.cpp`. **NOTE: The `DistributionInfo::Name` variable must uniquely identify your distribution and cannot change from one version of your app to the next.**
+1. Edit your distribution-specific information in `DistributionInfo.h` and `DistributionInfo.cpp`. **NOTE: The `DistributionInfo::Name` variable must uniquely identify your distribution and cannot change from one version of your app to the next.**
     > Note: The examples for creating a user account and querying the UID are from an Ubuntu-based system, and may need to be modified to work appropriately on your distribution.
 
-3.  Add an icon (.ico) and logo (.png) to the `/images` directory. The logo will be used in the Start Menu and the taskbar for your launcher, and the icon will appear on the Console window.
+1.  Add an icon (.ico) and logo (.png) to the `/images` directory. The logo will be used in the Start Menu and the taskbar for your launcher, and the icon will appear on the Console window.
     > Note: The icon must be named `icon.ico`.
 
-4. Pick the name you'd like to make this distro callable from the command line. For the rest of the README, I'll be using `mydistro` or `mydistro.exe`. **This is the name of your executable** and should be unique.
+1. Pick the name you'd like to make this distro callable from the command line. For the rest of the README, I'll be using `mydistro` or `mydistro.exe`. **This is the name of your executable** and should be unique.
 
-5. Make sure to change the name of the project in the `DistroLauncher-Appx/DistroLauncher-Appx.vcxproj` file to the name of your executable we picked in step 4. By default, the lines should look like:
+1. Make sure to change the name of the project in the `DistroLauncher-Appx/DistroLauncher-Appx.vcxproj` file to the name of your executable we picked in step 4. By default, the lines should look like:
 
 ``` xml
 <PropertyGroup Label="Globals">
@@ -78,12 +110,12 @@ So, if I wanted to instead call my distro "TheBestDistroEver", I'd change this t
 
 > Note: **DO NOT** change the ProjectName of the `DistroLauncher/DistroLauncher.vcxproj` from the value `launcher`. Doing so will break the build, as the DistroLauncher-Appx project is looking for the output of this project as `launcher.exe`.
 
-6.  Update `MyDistro.appxmanifest`. There are several properties that are in the manifest that will need to be updated with your specific values:
+1.  Update `MyDistro.appxmanifest`. There are several properties that are in the manifest that will need to be updated with your specific values:
     1. Note the `Identity Publisher` value (by default, `"CN=DistroOwner"`). We'll need that for testing the application.
     1. Ensure `<desktop:ExecutionAlias Alias="mydistro.exe" />` ends in ".exe". This is the command that will be used to launch your distro from the command line and should match the executable name we picked in step 4.
     1. Make sure each of the `Executable` values matches the executable name we picked in step 4.
 
-7. Copy your tar.gz containing your distro into the root of the project and rename it to `install.tar.gz`.
+1. Copy your tar.gz containing your distro into the root of the project and rename it to `install.tar.gz`.
 
 ## Setting up your Windows Environment
 You will need a Windows environment to test that your app installs and works as expected. To set up a Windows environment for testing you can follow the steps from the [Windows Dev Center](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines).
