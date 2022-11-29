@@ -77,6 +77,13 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
 		 [$HOME\source\repos\WSL-DistroLauncher\DistroLauncher-Appx\DistroLauncher-Appx.vcxproj]
 	```
 
+1. If you already have a copy of your tar.gz containing your distro, copy it into the root of the project and rename it to `install.tar.gz`.
+    > *Note*  
+    > if you are just wanting to work through the process I'd recommend extracting a ubuntu iso image and then compressing it back into a tar archive.
+    > 1. download iso for your architecture here: https://ubuntu.com/download/desktop
+    > 1. you can extract it using `7z` (`sudo apt-get install p7zip-full` in debian/ubuntu WSL)
+    > 1. then compress it back with `tar` (`tar -czvf install.tar.gz /path/to/directory)
+
 1. Generate a test certificate:
     1. In Visual Studio, open `DistroLauncher-Appx/MyDistro.appxmanifest`
     1. Select the Packaging tab
@@ -114,8 +121,6 @@ So, if I wanted to instead call my distro "TheBestDistroEver", I'd change this t
     1. Note the `Identity Publisher` value (by default, `"CN=DistroOwner"`). We'll need that for testing the application.
     1. Ensure `<desktop:ExecutionAlias Alias="mydistro.exe" />` ends in ".exe". This is the command that will be used to launch your distro from the command line and should match the executable name we picked in step 4.
     1. Make sure each of the `Executable` values matches the executable name we picked in step 4.
-
-1. Copy your tar.gz containing your distro into the root of the project and rename it to `install.tar.gz`.
 
 ## Setting up your Windows Environment
 You will need a Windows environment to test that your app installs and works as expected. To set up a Windows environment for testing you can follow the steps from the [Windows Dev Center](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines).
