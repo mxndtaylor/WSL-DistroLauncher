@@ -84,11 +84,21 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
     > 1. you can extract it using `7z` (`sudo apt-get install p7zip-full` in debian/ubuntu WSL)
     > 1. then compress it back with `tar` (`tar -czvf install.tar.gz /path/to/directory)
 
-1. Generate a test certificate:
-    1. In Visual Studio, open `DistroLauncher-Appx/MyDistro.appxmanifest`
-    1. Select the Packaging tab
+1. If you ran `.\build.bat` again, you'll get a error stating you don't have a valid certificate. Generate a test certificate:
+    1. from the "Solution Explorer", open `DistroLauncher-Appx/MyDistro.appxmanifest`
+    1. Select the Packaging tab:  
+    ![MyDistro.appxmanifest package tab UI](./tutorial_assets/mydistro_appxmanifest_packing_tab_ui.png)
     1. Select "Choose Certificate"
-    1. Click the Configure Certificate drop down and select Create test certificate.
+    1. Click "Create Certificate..."
+    1. Click "Okay"
+    1. "View Full Certificate"
+    1. go to the "Details" tab
+    1. scroll down to "Thumbprint" (at the bottom)
+    1. click on "Thumbprint"
+    1. highlight and copy the value in the text box below the property list
+    1. Click "Okay" on the certificate details window
+    1. click "Okay" again, this time on the "choose a certificate" window
+    1. open `DistroLauncher-Appx\DistroLauncher-Appx.vcxproj` and scroll down to (or search for) the `PackageCertificateThumbprint` element, and paste the thumbprint value in, replacing whatever was there.
 
 1. Edit your distribution-specific information in `DistributionInfo.h` and `DistributionInfo.cpp`. **NOTE: The `DistributionInfo::Name` variable must uniquely identify your distribution and cannot change from one version of your app to the next.**
     > Note: The examples for creating a user account and querying the UID are from an Ubuntu-based system, and may need to be modified to work appropriately on your distribution.
