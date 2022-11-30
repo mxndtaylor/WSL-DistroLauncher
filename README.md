@@ -56,7 +56,7 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
         - available from the toolbar "View > Solution Explorer"
         - default shortcut is "CTRL+ALT+L" in VS 2022
     1. You'll want the solution explorer in the "solution view", so if you see it saying "Folder View" across the top, double click on `DistroLauncher.sln`
-        > *Note*  
+        > **Note**  
         > to switch back to folder view, click this icon:  
         > ![solution explorer switcher button](./tutorial_assets/solution_explorer_view_switch_location.png)
         > click where it says "folder view"
@@ -78,43 +78,48 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
 	```
 
 1. If you already have a copy of your tar.gz containing your distro, copy it into the root of the project and rename it to `install.tar.gz`.
-    > *Note*  
+    > **Note**  
     > if you are just wanting to work through the process I'd recommend extracting a ubuntu iso image and then compressing it back into a tar archive.
     > 1. download iso for your architecture here: https://ubuntu.com/download/desktop
     > 1. you can extract it using `7z` (`sudo apt-get install p7zip-full` in debian/ubuntu WSL)
     > 1. then compress it back with `tar` (`tar -czvf install.tar.gz /path/to/directory)
 
 1. If you ran `.\build.bat` again, you'll get a error stating you don't have a valid certificate. Generate a test certificate:
-    1. from the "Solution Explorer", open `DistroLauncher-Appx/MyDistro.appxmanifest`
-    1. Select the Packaging tab:  
+    a. from the "Solution Explorer", open `DistroLauncher-Appx/MyDistro.appxmanifest`
+    a. Select the Packaging tab:  
     ![MyDistro.appxmanifest package tab UI](./tutorial_assets/mydistro_appxmanifest_packing_tab_ui.png)
-    1. Select "Choose Certificate"
-    1. Click "Create Certificate..."
-    1. Click "Okay"
-    1. "View Full Certificate"
-    1. go to the "Details" tab
-    1. scroll down to "Thumbprint" (at the bottom)
-    1. click on "Thumbprint"
-    1. highlight and copy the value in the text box below the property list
-    1. Click "Okay" on the certificate details window
-    1. click "Okay" again, this time on the "choose a certificate" window
-    1. open `DistroLauncher-Appx\DistroLauncher-Appx.vcxproj` and scroll down to (or search for) the `PackageCertificateThumbprint` element, and paste the thumbprint value in, replacing whatever was there.
+    a. generate the certificate with default values:
+        i. select "Choose Certificate", 
+        i. click "Create Certificate..." 
+        i. click "Okay"
+        i. confirm that data has been filled in above the buttons, in the scroll area
+    a. add the thumbprint to the vcxproj file, to easily fetch the thumbprint from the same screen: 
+        i. click "View Full Certificate" 
+        i. go to the "Details" tab
+        i. scroll down to and click on "Thumbprint"
+        i. highlight & copy the value that appeared in the text box below the property list and keep it handy
+		i. click "Okay" on the certificate details window to close it
+	a. click "Okay" again, this time closing the "choose a certificate" window
+    a. put the thumbprint in `DistroLauncher-Appx\DistroLauncher-Appx.vcxproj` 
+        i. open the file
+        i. scroll down to (or search for) the `PackageCertificateThumbprint` element
+        i. paste the thumbprint value into it, replacing anything that might have been there
 
 1. at this point the project should build successfully, you need only update your distro's details:
 
-	1. Edit your distribution-specific information in `DistributionInfo.h` and `DistributionInfo.cpp`. 
-		> *Note*  
+	a. Edit your distribution-specific information in `DistributionInfo.h` and `DistributionInfo.cpp`. 
+		> **Note**  
 		> The `DistributionInfo::Name` variable must uniquely identify your distribution and cannot change from one version of your app to the next.
-		> *Note*  
+		> **Note**  
 		> The examples for creating a user account and querying the UID are from an Ubuntu-based system, and may need to be modified to work appropriately on your distribution.
 
-	1.  Add an icon (.ico) and logo (.png) to the `/images` directory. The logo will be used in the Start Menu and the taskbar for your launcher, and the icon will appear on the Console window.
-		> *Note*  
+	a.  Add an icon (.ico) and logo (.png) to the `/images` directory. The logo will be used in the Start Menu and the taskbar for your launcher, and the icon will appear on the Console window.
+		> **Note**  
 		> The icon must be named `icon.ico`.
 
-	1. Pick the name you'd like to make this distro callable from the command line. For the rest of the README, I'll be using `mydistro` or `mydistro.exe`. **This is the name of your executable** and should be unique.
+	a. Pick the name you'd like to make this distro callable from the command line. For the rest of the README, I'll be using `mydistro` or `mydistro.exe`. **This is the name of your executable** and should be unique.
 
-	1. Make sure to change the name of the project in the `DistroLauncher-Appx/DistroLauncher-Appx.vcxproj` file to the name of your executable we picked in step 4. By default, the lines should look like:  
+	a. Make sure to change the name of the project in the `DistroLauncher-Appx/DistroLauncher-Appx.vcxproj` file to the name of your executable we picked in step 3. By default, the lines should look like:  
 	``` xml
 	<PropertyGroup Label="Globals">
 	  ...
@@ -129,14 +134,14 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
 	</PropertyGroup>
 	```
 
-	> *Note*  
+	> **Note**  
     > **DO NOT** change the ProjectName of the `DistroLauncher/DistroLauncher.vcxproj` from the value `launcher`.  
     > Doing so will break the build, as the DistroLauncher-Appx project is looking for the output of this project as `launcher.exe`.
 
-	1.  Update `MyDistro.appxmanifest`. There are several properties that are in the manifest that will need to be updated with your specific values:
-		1. Note the `Identity Publisher` value (by default, `"CN=DistroOwner"`). We'll need that for testing the application.
-		1. Ensure `<desktop:ExecutionAlias Alias="mydistro.exe" />` ends in ".exe". This is the command that will be used to launch your distro from the command line and should match the executable name we picked in step 4.
-		1. Make sure each of the `Executable` values matches the executable name we picked in step 4.
+	a.  Update `MyDistro.appxmanifest`. There are several properties that are in the manifest that will need to be updated with your specific values:
+		i. Note the `Identity Publisher` value (by default, `"CN=DistroOwner"`). We'll need that for testing the application.
+		i. Ensure `<desktop:ExecutionAlias Alias="mydistro.exe" />` ends in ".exe". This is the command that will be used to launch your distro from the command line and should match the executable name we picked in step 4.
+		i. Make sure each of the `Executable` values matches the executable name we picked in step 3.
 
 ## Setting up your Windows Environment
 You will need a Windows environment to test that your app installs and works as expected. To set up a Windows environment for testing you can follow the steps from the [Windows Dev Center](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines).
