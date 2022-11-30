@@ -100,37 +100,43 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
     1. click "Okay" again, this time on the "choose a certificate" window
     1. open `DistroLauncher-Appx\DistroLauncher-Appx.vcxproj` and scroll down to (or search for) the `PackageCertificateThumbprint` element, and paste the thumbprint value in, replacing whatever was there.
 
-1. Edit your distribution-specific information in `DistributionInfo.h` and `DistributionInfo.cpp`. **NOTE: The `DistributionInfo::Name` variable must uniquely identify your distribution and cannot change from one version of your app to the next.**
-    > Note: The examples for creating a user account and querying the UID are from an Ubuntu-based system, and may need to be modified to work appropriately on your distribution.
+1. at this point the project should build successfully, you need only update your distro's details:
 
-1.  Add an icon (.ico) and logo (.png) to the `/images` directory. The logo will be used in the Start Menu and the taskbar for your launcher, and the icon will appear on the Console window.
-    > Note: The icon must be named `icon.ico`.
+	1. Edit your distribution-specific information in `DistributionInfo.h` and `DistributionInfo.cpp`. 
+		> *Note*  
+		> The `DistributionInfo::Name` variable must uniquely identify your distribution and cannot change from one version of your app to the next.
+		> *Note*  
+		> The examples for creating a user account and querying the UID are from an Ubuntu-based system, and may need to be modified to work appropriately on your distribution.
 
-1. Pick the name you'd like to make this distro callable from the command line. For the rest of the README, I'll be using `mydistro` or `mydistro.exe`. **This is the name of your executable** and should be unique.
+	1.  Add an icon (.ico) and logo (.png) to the `/images` directory. The logo will be used in the Start Menu and the taskbar for your launcher, and the icon will appear on the Console window.
+		> *Note*  
+		> The icon must be named `icon.ico`.
 
-1. Make sure to change the name of the project in the `DistroLauncher-Appx/DistroLauncher-Appx.vcxproj` file to the name of your executable we picked in step 4. By default, the lines should look like:
+	1. Pick the name you'd like to make this distro callable from the command line. For the rest of the README, I'll be using `mydistro` or `mydistro.exe`. **This is the name of your executable** and should be unique.
 
-``` xml
-<PropertyGroup Label="Globals">
-  ...
-  <TargetName>mydistro</TargetName>
-</PropertyGroup>
-```
+	1. Make sure to change the name of the project in the `DistroLauncher-Appx/DistroLauncher-Appx.vcxproj` file to the name of your executable we picked in step 4. By default, the lines should look like:  
+	``` xml
+	<PropertyGroup Label="Globals">
+	  ...
+	  <TargetName>mydistro</TargetName>
+	</PropertyGroup>
+	```
+	So, if I wanted to instead call my distro "TheBestDistroEver", I'd change this to:  
+	``` xml
+	<PropertyGroup Label="Globals">
+	  ...
+	  <TargetName>TheBestDistroEver</TargetName>
+	</PropertyGroup>
+	```
 
-So, if I wanted to instead call my distro "TheBestDistroEver", I'd change this to:
-``` xml
-<PropertyGroup Label="Globals">
-  ...
-  <TargetName>TheBestDistroEver</TargetName>
-</PropertyGroup>
-```
+	> *Note*  
+    > **DO NOT** change the ProjectName of the `DistroLauncher/DistroLauncher.vcxproj` from the value `launcher`.  
+    > Doing so will break the build, as the DistroLauncher-Appx project is looking for the output of this project as `launcher.exe`.
 
-> Note: **DO NOT** change the ProjectName of the `DistroLauncher/DistroLauncher.vcxproj` from the value `launcher`. Doing so will break the build, as the DistroLauncher-Appx project is looking for the output of this project as `launcher.exe`.
-
-1.  Update `MyDistro.appxmanifest`. There are several properties that are in the manifest that will need to be updated with your specific values:
-    1. Note the `Identity Publisher` value (by default, `"CN=DistroOwner"`). We'll need that for testing the application.
-    1. Ensure `<desktop:ExecutionAlias Alias="mydistro.exe" />` ends in ".exe". This is the command that will be used to launch your distro from the command line and should match the executable name we picked in step 4.
-    1. Make sure each of the `Executable` values matches the executable name we picked in step 4.
+	1.  Update `MyDistro.appxmanifest`. There are several properties that are in the manifest that will need to be updated with your specific values:
+		1. Note the `Identity Publisher` value (by default, `"CN=DistroOwner"`). We'll need that for testing the application.
+		1. Ensure `<desktop:ExecutionAlias Alias="mydistro.exe" />` ends in ".exe". This is the command that will be used to launch your distro from the command line and should match the executable name we picked in step 4.
+		1. Make sure each of the `Executable` values matches the executable name we picked in step 4.
 
 ## Setting up your Windows Environment
 You will need a Windows environment to test that your app installs and works as expected. To set up a Windows environment for testing you can follow the steps from the [Windows Dev Center](https://developer.microsoft.com/en-us/windows/downloads/virtual-machines).
