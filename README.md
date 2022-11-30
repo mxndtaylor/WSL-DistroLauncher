@@ -79,10 +79,15 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
 
 1. If you already have a copy of your tar.gz containing your distro, copy it into the root of the project and rename it to `install.tar.gz`.
     > **Note**  
-    > if you are just wanting to work through the process I'd recommend extracting a ubuntu iso image and then compressing it back into a tar archive.
-    > 1. download iso for your architecture here: https://ubuntu.com/download/desktop
-    > 1. you can extract it using `7z` (`sudo apt-get install p7zip-full` in debian/ubuntu WSL)
-    > 1. then compress it back with `tar` (`tar -czvf install.tar.gz /path/to/directory)
+    > if you are just wanting to familiarize yourself with the process I'd recommend using ubuntu, as it will not require code changes.
+    > The easiest way might be to compress everything from a running ubuntu container into a tarball. 
+    > Run these commands from any `bash` prompt if you have docker integration set up to achieve this:
+    > ```sh 
+    > # uses tar to compress everything from root in the default ubuntu image (grabbing the container id)
+    > docker run --cidfile /tmp/ub_tarball.cid ubuntu tar -czf install.tar.gz /
+    > # extracts the tar artifact from the container into the current directory
+    > docker cp `cat /tmp/ub_tarball.cid`:/install.tar.gz install.tar.gz
+    > ```
 
 1. If you ran `.\build.bat` again, you'll get a error stating you don't have a valid certificate. Generate a test certificate:
     1. from the "Solution Explorer", open `DistroLauncher-Appx/MyDistro.appxmanifest`
