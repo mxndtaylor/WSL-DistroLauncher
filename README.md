@@ -138,7 +138,7 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
 		</PropertyGroup>
 		```
 		> **Note**  
-		> **DO NOT** change the ProjectName of the `DistroLauncher/DistroLauncher.vcxproj` from the value `launcher`.  
+		> **DO NOT** change the ProjectName of the `DistroLauncher/DistroLauncher.vcxproj` from the value `launcher`. 
 		> Doing so will break the build, as the DistroLauncher-Appx project is looking for the output of this project as `launcher.exe`.
 
 	1.  Update `MyDistro.appxmanifest`. There are several properties that are in the manifest that will need to be updated with your specific values:
