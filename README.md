@@ -110,6 +110,7 @@ The distro launcher is comprised of two Visual Studio projects - `launcher` and 
 	1. Edit your distribution-specific information in `DistributionInfo.h` and `DistributionInfo.cpp`. 
 		> **Note**  
 		> The `DistributionInfo::Name` variable must uniquely identify your distribution and cannot change from one version of your app to the next.
+
 		> **Note**  
 		> The examples for creating a user account and querying the UID are from an Ubuntu-based system, and may need to be modified to work appropriately on your distribution.
 
